@@ -69,29 +69,20 @@ const images = [
 
 const gallery = document.querySelector('ul.gallery');
 
-images.forEach(image => {
-  const li = document.createElement('li');
-  li.classList.add('gallery-item');
-  li.style.listStyleType = 'none';
+const galleryItems = images
+  .map(image => {
+    return `
+    <li class="gallery-item" style="list-style-type: none;">
+      <a class="gallery-link" href="${image.original}">
+        <img class="gallery-image" src="${image.preview}" alt="${image.description}" 
+            style="width: 360px; height: 200px; flex-shrink: 0; font-size: 0;" />
+      </a>
+    </li>
+  `;
+  })
+  .join('');
 
-  const a = document.createElement('a');
-  a.classList.add('gallery-link');
-  a.href = image.original;
-
-  const img = document.createElement('img');
-  img.classList.add('gallery-image');
-  img.src = image.preview;
-  img.dataset.source = image.original;
-  img.alt = image.description;
-  img.style.width = '360px';
-  img.style.height = '200px';
-  img.style.flexShrink = '0';
-  img.style.fontSize = '0';
-
-  a.appendChild(img);
-  li.appendChild(a);
-  gallery.appendChild(li);
-});
+gallery.innerHTML = galleryItems;
 
 gallery.style.display = 'flex';
 gallery.style.width = '1440px';
@@ -104,32 +95,6 @@ gallery.style.gap = '24px';
 gallery.style.background = '#FFF';
 gallery.style.overflow = 'auto';
 gallery.style.flexWrap = 'wrap';
-
-gallery.addEventListener('click', event => {
-  event.preventDefault();
-  const clickedElement = event.target;
-
-  if (clickedElement.nodeName !== 'IMG') {
-    return;
-  }
-
-  const imageSource = clickedElement.dataset.source;
-
-  const instance = basicLightbox.create(
-    `
-        <div class="modal">
-            <img src="${imageSource}" alt="${clickedElement.alt}" width="1112" height="640"></img>
-        </div>
-    `,
-    {
-      onShow: instance => {
-        instance.element().style.backgroundColor = 'rgba(46, 47, 66, 0.8)';
-      },
-    }
-  );
-
-  instance.show();
-});
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captions: true,
